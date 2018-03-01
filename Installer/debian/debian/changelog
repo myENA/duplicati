@@ -1,6 +1,6 @@
-duplicati (%VERSION%-1) unstable; urgency=low
+enatrustbackup (%VERSION%-1) stable; urgency=low
 
   * Packaged release
   * See changelog.txt for changes
 
- -- Kenneth Skovhede <kenneth@duplicati.com>  %DATE%
+ -- Nathan Johnson <njohnson@ena.com>  %DATE%

@@ -7,22 +7,19 @@ GITTAG=`git rev-parse --short HEAD`
 RELEASETYPE=`git describe --tags | cut -d '_' -f 2`
 BUILDTAG=`git describe --tags | cut -d '-' -f 2-4`
 
-DIRNAME="duplicati-$VERSION"
+DIRNAME="enatrustbackup-$VERSION"
 CWD=`pwd`
 
 git pull
 bash duplicati-make-git-snapshot.sh "${GITTAG}" "${DATE}" "${VERSION}" "${RELEASETYPE}" "${BUILDTAG}-${GITTAG}"
+echo got here
 
+echo got here, dirname is ${DIRNAME}
 touch "${DIRNAME}/releasenotes.txt"
 rm -rf "${DIRNAME}/.git"
 
 docker build -t "duplicati/debian-build:latest" - < Dockerfile.build
 
-
-
 # Weirdness with time not being synced in Docker instance
 sleep 5
-docker run  --workdir "/buildroot/${DIRNAME}" --volume "${CWD}":"/buildroot":"rw" "duplicati/debian-build:latest" dpkg-buildpackage
-
-rm -rf "${DIRNAME}"
-
+docker run -u 0:0 --workdir "/buildroot/${DIRNAME}" --volume "${CWD}":"/buildroot":"rw" "duplicati/debian-build:latest" /bin/bash -c 'dpkg-buildpackage; rm -rf "${DIRNAME}"'

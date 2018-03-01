@@ -30,7 +30,7 @@ else
 fi
 
 
-DIRNAME="duplicati-$VERSION"
+DIRNAME="enatrustbackup-$VERSION"
 DATE_STAMP=`LANG=C date -R`
 UPDATE_URLS="http://updates.duplicati.com/${RELEASETYPE}/latest.manifest;http://alt.updates.duplicati.com/${RELEASETYPE}/latest.manifest"
 
