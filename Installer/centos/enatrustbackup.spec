@@ -10,7 +10,7 @@
 %global alphatag .git
 
 # Then load overrides
-%include %{_topdir}/SOURCES/%{namer}-buildinfo.spec
+%include %{_topdir}/SOURCES/%{namee}-buildinfo.spec
 
 Name:       %{namee}
 Version:	%{_buildversion}
