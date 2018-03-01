@@ -7,6 +7,8 @@ ENV DOCKER_BUILD_PROXY $DOCKER_BUILD_PROXY
 # Install common build tools
 RUN set -uex; \
     export http_proxy=${HTTP_PROXY-${DOCKER_BUILD_PROXY}}; \
+    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF; \
+    echo "deb http://download.mono-project.com/repo/ubuntu stable-xenial main" | tee /etc/apt/sources.list.d/mono-official-stable.list; \
     apt-get update; \
     apt-get install --no-install-suggests --no-install-recommends -y \
       build-essential \
@@ -16,6 +18,7 @@ RUN set -uex; \
       libappindicator0.1-cil-dev \
       ca-certificates-mono \
       gtk-sharp2 \
+      tzdata \
       nuget; \
     apt-get clean all
 
@@ -25,4 +28,4 @@ label org.label-schema.name = "duplicati/debian-build" \
       org.label-schema.version = "20161230" \
       org.label-schema.vendor="Deployable" \
       org.label-schema.docker.cmd="docker run -ti duplicati/debian-build" \
-      org.label-schema.schema-version="1.0" 
+      org.label-schema.schema-version="1.0"

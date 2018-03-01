@@ -49,7 +49,7 @@ git clone ${REF:+--reference $REF} \
 
 cd "$DIRNAME"
 
-git checkout -b fedora-build ${1:-HEAD}
+git checkout -b debian-build ${1:-HEAD}
 
 echo "${BUILDTAG}" > "Duplicati/License/VersionTag.txt"
 echo "${RELEASETYPE}" > "Duplicati/Library/AutoUpdater/AutoUpdateBuildChannel.txt"
