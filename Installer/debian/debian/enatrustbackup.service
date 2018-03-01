@@ -1,11 +1,11 @@
 [Unit]
-Description=Duplicati web-server
+Description=ENA Trust Backup web-server
 After=network.target
 
 [Service]
 Nice=19
 IOSchedulingClass=idle
-EnvironmentFile=-/etc/default/duplicati
+EnvironmentFile=-/etc/default/enatrustbackup
 ExecStart=/usr/bin/duplicati-server $DAEMON_OPTS
 Restart=always
 
