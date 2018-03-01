@@ -1,0 +1,26 @@
+FROM centos:latest
+
+# Source build packages locally
+ARG DOCKER_BUILD_PROXY
+ENV DOCKER_BUILD_PROXY $DOCKER_BUILD_PROXY
+
+# Install common build tools
+ADD install_glide.sh /
+RUN /install_glide.sh
+RUN rm /install_glide.sh
+RUN yum -y install epel-release deltarpm
+RUN yum -y upgrade
+RUN yum -y install @"Minimal Install" @buildsys-build yum-utils rpm-sign gnupg rpmdevtools epel-release golang
+
+# Install mono things
+RUN yum -y install mono-devel gnome-sharp-devel dos2unix git nuget
+
+# Fix nuget
+RUN cert-sync /etc/pki/tls/certs/ca-bundle.crt
+RUN nuget update -self
+
+label org.label-schema.name = "duplicati/centos-build" \
+      org.label-schema.version = "20161230" \
+      org.label-schema.vendor="Deployable" \
+      org.label-schema.docker.cmd="docker run -ti duplicati/centos-build" \
+      org.label-schema.schema-version="1.0" 
