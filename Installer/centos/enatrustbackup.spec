@@ -34,9 +34,9 @@ Source0:	%{namee}-%{_builddate}.tar.bz2
 
 # based on libdrm's make-git-snapshot.sh 
 # sh duplicati-make-git-snapshot.sh <gitcommit> <_builddate>
-Source1:	duplicati-build-package.sh
-Source2:	duplicati-make-git-snapshot.sh
-Source3:	duplicati-buildinfo.spec
+Source1:	%{namer}-build-package.sh
+Source2:	%{namer}-make-git-snapshot.sh
+Source3:	%{namee}-buildinfo.spec
 
 
 BuildRequires:  mono-devel gnome-sharp-devel
