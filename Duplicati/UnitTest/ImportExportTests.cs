@@ -61,7 +61,7 @@ namespace Duplicati.UnitTest
                     ID = "1",
                     Metadata = metadata,
                     Name = name,
-                    Settings = new[] { new Setting { Name = "passphrase", Value = "12345" } },
+                    Settings = new[] { new Setting { Name = "--no-encryption"} },
                     Sources = new[] { "Mock Backup Source" },
                     Tags = new[] { "Tags" },
                     TargetURL = "file:///mock_backup_target"
