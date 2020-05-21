@@ -515,10 +515,10 @@ namespace Duplicati.UnitTest
 
         [Test]
         [Category("Disruption")]
-        public void StopNow()
+        public async Task StopNow()
         {
             // Choose a dblock size that is small enough so that more than one volume is needed.
-            Dictionary<string, string> options = new Dictionary<string, string>(this.TestOptions) {["dblock-size"] = "10mb"};
+            Dictionary<string, string> options = new Dictionary<string, string>(this.TestOptions) {["dblock-size"] = "10mb", ["disable-synthetic-filelist"] = "true"};
 
             // Run a complete backup.
             using (Controller c = new Controller("file://" + this.TARGETFOLDER, options, null))
@@ -541,7 +541,7 @@ namespace Duplicati.UnitTest
                 Thread.Sleep(1000);
 
                 c.Stop(false);
-                Assert.That(async () => await backupTask.ConfigureAwait(false), Throws.Exception);
+                await backupTask.ConfigureAwait(false);
             }
 
             // The next backup should proceed without issues.

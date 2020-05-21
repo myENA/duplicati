@@ -1081,12 +1081,11 @@ namespace Duplicati.Library.Main
         public void Stop(bool allowCurrentFileToFinish)
         {
             var ct = m_currentTask;
-            if (ct == null) return;
-            if (allowCurrentFileToFinish)
-            {
-                Logging.Log.WriteVerboseMessage(LOGTAG, "CancellationRequested", "Cancellation Requested");
-                m_cancellationTokenSource.Cancel();
-            }
+            if (ct == null)
+                return;
+
+            Logging.Log.WriteVerboseMessage(LOGTAG, "CancellationRequested", "Cancellation Requested");
+            m_cancellationTokenSource.Cancel();
             ct.Stop(allowCurrentFileToFinish);
         }
 

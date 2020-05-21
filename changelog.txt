@@ -1,3 +1,69 @@
+2020-05-11 - 2.0.5.106_canary_2020-05-11
+==========
+NOTE: this version updates the database version from v10 to v11!
+
+Downgrade from this version requires manually adjusting the version number in the database,
+The additions can be re-applied if the database is upgraded again later.
+
+* Added certificate dependency to debian packages, thanks @borfast
+* Sorting files and folders in the WEB UI, thanks @drwtsn32x
+* Code cleanup, unused code removal and more, thanks @warwickmm
+* Updated exclusion folder list, thanks @drwtsn32x
+* Fixed spelling issues for CLI help, thanks @comradekingu
+* Fixed the hostname check to be case-insensitive, thanks @warwickmm
+* No longer removes AlphaFS and AlphaVSS files from non-Windows packages, thanks @warwickmm
+* Fixed a case where backups could run immediately and ignore the scheduled time, thanks @warwickmm
+* Added a database index that signficantly improves database rebuilds, thanks @warwickmm
+* Added MyCloudPlace as an S3 provider, thanks @cedbossneo
+* Improved errors from Json source, thanks @kenkendk
+* Changed mentions of "Amazon S3" to "S3 compatible", thanks @kenkendk
+
+2020-03-25 - 2.0.5.104_canary_2020-03-25
+==========
+* Improved log messags when using retetion rules, thanks @warwickmm
+* Added logging for USN soft-failures, thannks @drwtsn32x
+* Improved regexp magic for parsing Windows, thanks @drwtsn32x
+* Fixed storing `dlist` file after interrupted backup, thanks @seantempleton
+* Improved logic around throttle values, thanks @seantempleton
+* Fixed issues with Windows metadata and inheritance, thanks @drwtsn32x
+* Major code cleanup, removing unused members and other, thanks @warwickmm
+* Corrected retry attempts log message, thanks @warwickmm
+* Fixed device-type reports on Mono, thanks @warwickmm
+* Improved error messages during HTTP timeouts in some cases, thanks @warwickmm
+* Reworked the MS-Graph backend to use an alternate HTTP implementation, thanks @tygill
+* Fixed some cases where an interrupted backup could cause database corruption, thanks @seantempleton
+
+2020-02-18 - 2.0.5.103_canary_2020-02-18
+==========
+
+This is a rebuild of 2.0.5.102 with a fix for MacOS packages
+
+* Improved performance of the recovery-tool, thanks @tfriedel and @warwickmm
+* Debian and RPM packages now require Mono 5.0, thanks @drwtsn32x
+* Fixed issue with USN returning too many results, thanks @drwtsn32x
+* Code quality improvements, thanks @warwickmm
+* Added `.odg` and `.otg` as compressed file types, thanks @warwickmm
+* Improved USN changes by looking at size and attributes, thanks @drwtsn32x
+* Code quality improvements, thanks @drwtsn32x
+* Unittest improvements, thanks @warwickmm
+* The OVH backend now points to Keystone v3, thanks @warwickmm
+* Fixed allowing minutes in retention rules, thanks @Pectojin
+* Fixed loading SQLite on Windows, thanks @warwickmm
+
+2020-02-18 - 2.0.5.102_canary_2020-02-18
+==========
+* Improved performance of the recovery-tool, thanks @tfriedel and @warwickmm
+* Debian and RPM packages now require Mono 5.0, thanks @drwtsn32x
+* Fixed issue with USN returning too many results, thanks @drwtsn32x
+* Code quality improvements, thanks @warwickmm
+* Added `.odg` and `.otg` as compressed file types, thanks @warwickmm
+* Improved USN changes by looking at size and attributes, thanks @drwtsn32x
+* Code quality improvements, thanks @drwtsn32x
+* Unittest improvements, thanks @warwickmm
+* The OVH backend now points to Keystone v3, thanks @warwickmm
+* Fixed allowing minutes in retention rules, thanks @Pectojin
+* Fixed loading SQLite on Windows, thanks @warwickmm
+
 2020-01-23 - 2.0.5.101_canary_2020-01-23
 ==========
 * Improved tests, thanks @drwtsn32x
