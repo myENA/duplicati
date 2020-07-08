@@ -585,7 +585,7 @@ namespace Duplicati.Library.Main.Operation
                 catch (Exception ex)
                 {
                     var aex = BuildException(ex, uploaderTask, parallelScanner);
-                    Logging.Log.WriteErrorMessage(LOGTAG, "FatalError", ex, "Fatal error");
+                    Logging.Log.WriteErrorMessage(LOGTAG, "FatalError", ex, "Fatal error: " + ex.Message);
                     if (aex == ex)
                         throw;
                     
