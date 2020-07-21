@@ -112,7 +112,7 @@ namespace Duplicati.Server
                     var lastUpdatesFolderLocation = AppDomain.CurrentDomain.GetData("AUTOUPDATER_LOAD_UPDATE");
                     UpdateLogger.Log($"lastUpdatesFolderLocation: {lastUpdatesFolderLocation}");
                     var runUpdateScript = "run-update-script_osx.sh";
-
+                    System.Diagnostics.Process.Start("chmod", $@"+x ""{lastUpdatesFolderLocation+"/"+runUpdateScript}""").WaitForExit();
 
                     // Execute script file from the Last updates folder location
                     var ex = Library.Utility.Utility.ExecuteCommand(lastUpdatesFolderLocation.ToString(), runUpdateScript, true);
