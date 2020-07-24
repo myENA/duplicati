@@ -1524,11 +1524,10 @@ namespace Duplicati.Library.Utility
                     processInfo = new ProcessStartInfo("/bin/bash")
                     {
                         CreateNoWindow = true,
-                        UseShellExecute = true,
-                        RedirectStandardError = false,
-                        RedirectStandardOutput = false,
+                        UseShellExecute = false,
+                        RedirectStandardError = true,
+                        RedirectStandardOutput = true,
                         WorkingDirectory = folderLocation,
-                        Verb="runas",
                         Arguments = commandFile
                     };
                 }
