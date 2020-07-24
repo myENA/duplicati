@@ -116,15 +116,17 @@ namespace Duplicati.Server
                     var runUpdateScript = "run-update-script_osx.sh";
                     System.Diagnostics.Process.Start("chmod", $@"+x ""{lastUpdatesFolderLocation + "/" + runUpdateScript}""").WaitForExit();
                     System.Diagnostics.Process.Start("chmod", $@"755 ""{lastUpdatesFolderLocation + "/client/trustbackupclient"}""").WaitForExit();
+
                     System.Diagnostics.Process.Start("launchctl", "unload  /Library/LaunchDaemons/com.ena.enatrustbackup.agent.launchdaemon.plist").WaitForExit();
-                    System.Diagnostics.Process.Start("launchctl", "unload  /Library/LaunchDaemons/com.ena.enatrustbackup.app.launchdaemon.plist").WaitForExit();
+                    UpdateLogger.Log($"Stoped agent");
 
                     string old_plist = File.ReadAllText("/Library/LaunchDaemons/com.ena.enatrustbackup.agent.launchdaemon.plist");
                     string new_plist = Regex.Replace(old_plist, @"\/Applications[^<]*+", lastUpdatesFolderLocation + "/client/trustbackupclient");
                     File.WriteAllText("/Library/LaunchDaemons/com.ena.enatrustbackup.agent.launchdaemon.plist", new_plist);
+                    UpdateLogger.Log($"Changed plist string.");
 
-                    System.Diagnostics.Process.Start("launchctl", "load -w /Library/LaunchDaemons/com.ena.enatrustbackup.app.launchdaemon.plist").WaitForExit();
                     System.Diagnostics.Process.Start("launchctl", "load -w  /Library/LaunchDaemons/com.ena.enatrustbackup.agent.launchdaemon.plist").WaitForExit();
+                    UpdateLogger.Log($"Started agent");
 
                     // Wait a few seconds for script to finish running
                     UpdateLogger.Log("Executing OSX updates script. Wait a few seconds for script to finish running");
