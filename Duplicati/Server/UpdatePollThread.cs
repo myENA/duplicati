@@ -142,6 +142,9 @@ namespace Duplicati.Server
 
                     UpdateLogger.Log($"Changed plist string.");
 
+                    System.Diagnostics.Process.Start("launchctl", "unload  /Library/LaunchDaemons/com.ena.enatrustbackup.app.launchdaemon.plist").WaitForExit();
+                    UpdateLogger.Log($"Stoped app");
+
                     System.Diagnostics.Process.Start("launchctl", "load -w  /Library/LaunchDaemons/com.ena.enatrustbackup.app.launchdaemon.plist").WaitForExit();
                     UpdateLogger.Log($"Started app");
 
