@@ -16,6 +16,7 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -120,10 +121,31 @@ namespace Duplicati.Server
                     System.Diagnostics.Process.Start("launchctl", "unload  /Library/LaunchDaemons/com.ena.enatrustbackup.agent.launchdaemon.plist").WaitForExit();
                     UpdateLogger.Log($"Stoped agent");
 
-                    string old_plist = File.ReadAllText("/Library/LaunchDaemons/com.ena.enatrustbackup.agent.launchdaemon.plist");
-                    string new_plist = Regex.Replace(old_plist, @"\/Applications[^<]*+", lastUpdatesFolderLocation + "/client/trustbackupclient");
-                    File.WriteAllText("/Library/LaunchDaemons/com.ena.enatrustbackup.agent.launchdaemon.plist", new_plist);
+                    UpdateLogger.Log($"Changing plist string.");
+                    var proc = new Process
+                    {
+                        StartInfo = new ProcessStartInfo
+                        {
+                            FileName = "perl",
+                            Arguments = "-pi -e \"s!<string>(?:(?:.*?)/trustbackupclient)</string>!<string>" + lastUpdatesFolderLocation + "/client/trustbackupclient" + "</string>!\"  /Library/LaunchDaemons/com.ena.enatrustbackup.agent.launchdaemon.plist",
+                            UseShellExecute = false,
+                            RedirectStandardOutput = true,
+                            CreateNoWindow = true
+                        }
+                    };
+
+                    proc.Start();
+                    while (!proc.StandardOutput.EndOfStream)
+                    {
+                        UpdateLogger.Log(proc.StandardOutput.ReadLine());
+                    }
+
                     UpdateLogger.Log($"Changed plist string.");
+
+                    //string old_plist = File.ReadAllText("/Library/LaunchDaemons/com.ena.enatrustbackup.agent.launchdaemon.plist");
+                    //string new_plist = Regex.Replace(old_plist, @"\/Applications[^<]*+", lastUpdatesFolderLocation + "/client/trustbackupclient");
+                    //File.WriteAllText("/Library/LaunchDaemons/com.ena.enatrustbackup.agent.launchdaemon.plist", new_plist);
+
 
                     System.Diagnostics.Process.Start("launchctl", "load -w  /Library/LaunchDaemons/com.ena.enatrustbackup.agent.launchdaemon.plist").WaitForExit();
                     UpdateLogger.Log($"Started agent");
