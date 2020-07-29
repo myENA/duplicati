@@ -16,7 +16,10 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 using System;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Duplicati.Library.AutoUpdater;
 using Duplicati.Library.Common;
@@ -112,14 +115,35 @@ namespace Duplicati.Server
                     var lastUpdatesFolderLocation = AppDomain.CurrentDomain.GetData("AUTOUPDATER_LOAD_UPDATE");
                     UpdateLogger.Log($"lastUpdatesFolderLocation: {lastUpdatesFolderLocation}");
                     var runUpdateScript = "run-update-script_osx.sh";
+                    System.Diagnostics.Process.Start("chmod", $@"+x ""{lastUpdatesFolderLocation + "/" + runUpdateScript}""").WaitForExit();
+                    System.Diagnostics.Process.Start("chmod", $@"755 ""{lastUpdatesFolderLocation + "/client/trustbackupclient"}""").WaitForExit();
 
+                    System.Diagnostics.Process.Start("launchctl", "unload  /Library/LaunchDaemons/com.ena.enatrustbackup.agent.launchdaemon.plist").WaitForExit();
+                    UpdateLogger.Log($"Stoped agent");
 
-                    // Execute script file from the Last updates folder location
-                    var ex = Library.Utility.Utility.ExecuteCommand(lastUpdatesFolderLocation.ToString(), runUpdateScript, true);
-                    if (null != ex)
+                    UpdateLogger.Log($"Changing plist string.");
+                    var proc = new Process
                     {
-                        UpdateLogger.Log($"Exception occurred on ExecuteCommand: {ex.Message}");
+                        StartInfo = new ProcessStartInfo
+                        {
+                            FileName = "perl",
+                            Arguments = "-pi -e \"s!<string>(?:(?:.*?)/trustbackupclient)</string>!<string>" + lastUpdatesFolderLocation + "/client/trustbackupclient" + "</string>!\"  /Library/LaunchDaemons/com.ena.enatrustbackup.agent.launchdaemon.plist",
+                            UseShellExecute = false,
+                            RedirectStandardOutput = true,
+                            CreateNoWindow = true
+                        }
+                    };
+
+                    proc.Start();
+                    while (!proc.StandardOutput.EndOfStream)
+                    {
+                        UpdateLogger.Log(proc.StandardOutput.ReadLine());
                     }
+
+                    UpdateLogger.Log($"Changed plist string.");
+
+                    System.Diagnostics.Process.Start("launchctl", "load -w  /Library/LaunchDaemons/com.ena.enatrustbackup.agent.launchdaemon.plist").WaitForExit();
+                    UpdateLogger.Log($"Started agent");
 
                     // Wait a few seconds for script to finish running
                     UpdateLogger.Log("Executing OSX updates script. Wait a few seconds for script to finish running");
