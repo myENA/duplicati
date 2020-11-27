@@ -34,6 +34,13 @@ namespace Duplicati.Library.Common.IO
         private const string PATHPREFIX_SERVER = @"\\";
         private static readonly string DIRSEP = Util.DirectorySeparatorString;
 
+        private static bool IsPathTooLong(string path)
+        {
+            // Use 258 for length check instead of 260 (MAX_PATH) - we need to leave room for the 16-bit (wide) null terminator
+            return path.StartsWith(UNCPREFIX, StringComparison.Ordinal) || path.StartsWith(UNCPREFIX_SERVER, StringComparison.Ordinal) || path.Length > 258;
+        }
+
+
         public static string PrefixWithUNC(string path)
         {
             if (IsPrefixedWithUNC(path))
@@ -175,6 +182,18 @@ namespace Duplicati.Library.Common.IO
         private void SetAccessControlDir(string path, DirectorySecurity rules)
         {
             System.IO.Directory.SetAccessControl(PrefixWithUNC(path), rules);
+        }
+
+        private static T PathTooLongFuncWrapper<T>(Func<string, T> nativeIOFunc,
+                                   Func<string, T> alternativeIOFunc,
+                                   string path, bool prefixWithUnc = false)
+        {
+            if (!IsPathTooLong(path))
+                try { return nativeIOFunc(path); }
+                catch (System.IO.PathTooLongException) { }
+                catch (System.ArgumentException) { }
+
+            return !prefixWithUnc ? alternativeIOFunc(path) : alternativeIOFunc(PrefixWithUNC(path));
         }
 
         #region ISystemIO implementation
@@ -344,13 +363,13 @@ namespace Duplicati.Library.Common.IO
 
         public string[] GetDirectories(string path)
         {
-            if (IsPrefixedWithUNC(path))
+           if (IsPrefixedWithUNC(path))
             {
                 return Directory.GetDirectories(path);
             }
             else
             {
-                return Directory.GetDirectories(PrefixWithUNC(path)).Select(StripUNCPrefix).ToArray();
+                return PathTooLongFuncWrapper(Directory.GetDirectories, AlphaFS.Directory.GetDirectories, path, false).Select(StripUNCPrefix).ToArray();
             }
         }
 
