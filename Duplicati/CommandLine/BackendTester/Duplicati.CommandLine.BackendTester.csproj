@@ -114,10 +114,6 @@
       <Project>{4D012CB1-4B92-47F4-89B7-BF80A73A2E99}</Project>
       <Name>Duplicati.License</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Library\Backend\OneDrive\Duplicati.Library.Backend.OneDrive.csproj">
-      <Project>{CCD76347-7DC7-4B42-B7E1-E500E624CAC3}</Project>
-      <Name>Duplicati.Library.Backend.OneDrive</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Library\Backend\TahoeLAFS\Duplicati.Library.Backend.TahoeLAFS.csproj">
       <Project>{C0270709-2A40-43B5-8CF1-69581B9FA2A1}</Project>
       <Name>Duplicati.Library.Backend.TahoeLAFS</Name>

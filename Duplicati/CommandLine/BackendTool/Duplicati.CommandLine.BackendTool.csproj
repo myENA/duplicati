@@ -124,10 +124,6 @@
       <Project>{4D012CB1-4B92-47F4-89B7-BF80A73A2E99}</Project>
       <Name>Duplicati.License</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Library\Backend\OneDrive\Duplicati.Library.Backend.OneDrive.csproj">
-      <Project>{CCD76347-7DC7-4B42-B7E1-E500E624CAC3}</Project>
-      <Name>Duplicati.Library.Backend.OneDrive</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Library\Backend\GoogleServices\Duplicati.Library.Backend.GoogleServices.csproj">
       <Project>{5489181D-950C-44AF-873C-45EB0A3B6BD2}</Project>
       <Name>Duplicati.Library.Backend.GoogleServices</Name>

@@ -116,10 +116,6 @@
       <Project>{F61679A9-E5DE-468A-B5A4-05F92D0143D2}</Project>
       <Name>Duplicati.Library.Backend.FTP</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Library\Backend\OneDrive\Duplicati.Library.Backend.OneDrive.csproj">
-      <Project>{CCD76347-7DC7-4B42-B7E1-E500E624CAC3}</Project>
-      <Name>Duplicati.Library.Backend.OneDrive</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Library\Backend\S3\Duplicati.Library.Backend.S3.csproj">
       <Project>{C03F6DFD-805A-4BE0-9338-64870ADDB4A2}</Project>
       <Name>Duplicati.Library.Backend.S3</Name>
