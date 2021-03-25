@@ -71,8 +71,11 @@ backupApp.service('SystemInfo', function($rootScope, $timeout, $cookies, AppServ
                 'mssp': null,
                 'dropbox': null,
                 'sia': null,
+                'tardigrade': null,
+                'telegram': null,
                 'jottacloud': null,
-				'rclone': null
+				'rclone': null,
+				'cos': null
             }
         };
 

@@ -9,7 +9,7 @@
     <RootNamespace>Duplicati.CommandLine.RecoveryTool</RootNamespace>
     <AssemblyName>Duplicati.CommandLine.RecoveryTool</AssemblyName>
     <AssemblyOriginatorKeyFile>Duplicati.snk</AssemblyOriginatorKeyFile>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <UseMSBuildEngine>false</UseMSBuildEngine>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
@@ -134,6 +134,10 @@
       <Project>{C0270709-2A40-43B5-8CF1-69581B9FA2A1}</Project>
       <Name>Duplicati.Library.Backend.TahoeLAFS</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Library\Backend\Telegram\Duplicati.Library.Backend.Telegram.csproj">
+      <Project>{f61679a9-e5de-468a-b5a4-05f92d0143d2}</Project>
+      <Name>Duplicati.Library.Backend.Telegram</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Library\Backend\WEBDAV\Duplicati.Library.Backend.WEBDAV.csproj">
       <Project>{BAE27510-8B5D-44B2-B33E-372A98908041}</Project>
       <Name>Duplicati.Library.Backend.WEBDAV</Name>
@@ -181,6 +185,10 @@
     <ProjectReference Include="..\..\Library\Common\Duplicati.Library.Common.csproj">
       <Project>{D63E53E4-A458-4C2F-914D-92F715F58ACF}</Project>
       <Name>Duplicati.Library.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Library\Backend\Tardigrade\Duplicati.Library.Backend.Tardigrade.csproj">
+      <Project>{AE035E01-C917-4F13-A35E-78F21C1A2F17}</Project>
+      <Name>Duplicati.Library.Backend.Tardigrade</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

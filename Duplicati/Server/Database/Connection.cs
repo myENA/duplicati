@@ -546,21 +546,25 @@ namespace Duplicati.Server.Database
 
         internal void UpdateBackupDBPath(IBackup item, string path)
         {
-            lock(m_lock)
-            using(var tr = m_connection.BeginTransaction())
-            using(var cmd = m_connection.CreateCommand())
+            lock (m_lock)
             {
-                cmd.Transaction = tr;
-                cmd.Parameters.Add(cmd.CreateParameter());
-                ((System.Data.IDbDataParameter)cmd.Parameters[0]).Value = path;
-                cmd.Parameters.Add(cmd.CreateParameter());
-                ((System.Data.IDbDataParameter)cmd.Parameters[1]).Value = item.ID;
+                using (var tr = m_connection.BeginTransaction())
+                {
+                    using (var cmd = m_connection.CreateCommand())
+                    {
+                        cmd.Transaction = tr;
+                        cmd.Parameters.Add(cmd.CreateParameter());
+                        ((System.Data.IDbDataParameter) cmd.Parameters[0]).Value = path;
+                        cmd.Parameters.Add(cmd.CreateParameter());
+                        ((System.Data.IDbDataParameter) cmd.Parameters[1]).Value = item.ID;
 
-                cmd.CommandText = @"UPDATE ""Backup"" SET ""DBPath""=? WHERE ""ID""=?";
-                cmd.ExecuteNonQuery();
-                tr.Commit();
+                        cmd.CommandText = @"UPDATE ""Backup"" SET ""DBPath""=? WHERE ""ID""=?";
+                        cmd.ExecuteNonQuery();
+                        tr.Commit();
+                    }
+                }
             }
-            
+
             System.Threading.Interlocked.Increment(ref Program.LastDataUpdateID);
             Program.StatusEventNotifyer.SignalNewEvent();
         }
@@ -853,8 +857,9 @@ namespace Duplicati.Server.Database
             return true;
         }
 
-        public void RegisterNotification(Serialization.NotificationType type, string title, string message, Exception ex, string backupid, string action, string logid, string messageid, string logtag, Func<INotification, INotification[], INotification> conflicthandler)
+        public long RegisterNotification(Serialization.NotificationType type, string title, string message, Exception ex, string backupid, string action, string logid, string messageid, string logtag, Func<INotification, INotification[], INotification> conflicthandler)
         {
+            long retId = 0;
             lock(m_lock)
             {
                 var notification = new Notification()
@@ -874,12 +879,13 @@ namespace Duplicati.Server.Database
 
                 var conflictResult = conflicthandler(notification, GetNotifications());
                 if (conflictResult == null)
-                    return;
+                    return retId;
                 
                 if (conflictResult != notification)
                     DeleteFromDb(typeof(Notification).Name, conflictResult.ID);
 
                 OverwriteAndUpdateDb(null, null, null, new Notification[] { notification }, false);
+                retId = notification.ID;
 
                 if (type == Duplicati.Server.Serialization.NotificationType.Error)
                     Program.DataConnection.ApplicationSettings.UnackedError = true;
@@ -889,6 +895,7 @@ namespace Duplicati.Server.Database
 
             System.Threading.Interlocked.Increment(ref Program.LastNotificationUpdateID);
             Program.StatusEventNotifyer.SignalNewEvent();
+            return retId;
         }
 
         //Workaround to clean up the database after invalid settings update
@@ -1174,15 +1181,15 @@ namespace Duplicati.Server.Database
                         var prop = properties[i];
 
                         if (prop.PropertyType.IsEnum)
-                        prop.SetValue(item, ConvertToEnum(prop.PropertyType, rd, i, Enum.GetValues(prop.PropertyType).GetValue(0)), null);
+                            prop.SetValue(item, ConvertToEnum(prop.PropertyType, rd, i, Enum.GetValues(prop.PropertyType).GetValue(0)), null);
                         else if (prop.PropertyType == typeof(string))
-                        prop.SetValue(item, ConvertToString(rd, i), null);
+                            prop.SetValue(item, ConvertToString(rd, i), null);
                         else if (prop.PropertyType == typeof(long))
-                        prop.SetValue(item, ConvertToInt64(rd, i), null);
+                            prop.SetValue(item, ConvertToInt64(rd, i), null);
                         else if (prop.PropertyType == typeof(bool))
-                        prop.SetValue(item, ConvertToBoolean(rd, i), null);
+                            prop.SetValue(item, ConvertToBoolean(rd, i), null);
                         else if (prop.PropertyType == typeof(DateTime))
-                        prop.SetValue(item, ConvertToDateTime(rd, i), null);
+                            prop.SetValue(item, ConvertToDateTime(rd, i), null);
                     }
 
                     return item;

@@ -29,7 +29,10 @@ backupApp.service('EditUriBuiltins', function (AppService, AppUtils, SystemInfo,
     EditUriBackendConfig.templates['box']         = 'templates/backends/oauth.html';
     EditUriBackendConfig.templates['dropbox'] = 'templates/backends/oauth.html';
     EditUriBackendConfig.templates['sia']       = 'templates/backends/sia.html';
+    EditUriBackendConfig.templates['tardigrade']  = 'templates/backends/tardigrade.html';
+    EditUriBackendConfig.templates['telegram']  = 'templates/backends/telegram.html';
     EditUriBackendConfig.templates['rclone']       = 'templates/backends/rclone.html';
+	EditUriBackendConfig.templates['cos']       = 'templates/backends/cos.html';
 
     EditUriBackendConfig.testers['s3'] = function(scope, callback) {
 
@@ -153,6 +156,32 @@ backupApp.service('EditUriBuiltins', function (AppService, AppUtils, SystemInfo,
         
         scope.s3_client = s3_client_options[0];
         scope.s3_client_options = s3_client_options;
+    };
+	
+	EditUriBackendConfig.loaders['tardigrade'] = function (scope) {
+        if (scope.tardigrade_satellites == null) {
+            AppService.post('/webmodule/tardigrade-getconfig', {'tardigrade-config': 'Satellites'}).then(function (data) {
+                scope.tardigrade_satellites = data.data.Result;
+                if (scope.tardigrade_satellite == undefined && scope.tardigrade_satellite_custom == undefined)
+                    scope.tardigrade_satellite = 'us-central-1.tardigrade.io:7777';
+
+            }, AppUtils.connectionError);
+        } else {
+            if (scope.tardigrade_satellite == undefined && scope.tardigrade_satellite_custom == undefined)
+                scope.tardigrade_satellite = 'us-central-1.tardigrade.io:7777';
+        }
+		
+		if (scope.tardigrade_auth_methods == null) {
+            AppService.post('/webmodule/tardigrade-getconfig', {'tardigrade-config': 'AuthenticationMethods'}).then(function (data) {
+                scope.tardigrade_auth_methods = data.data.Result;
+                if (scope.tardigrade_auth_method == undefined)
+                    scope.tardigrade_auth_method = 'API key';
+
+            }, AppUtils.connectionError);
+        } else {
+            if (scope.tardigrade_auth_method == undefined)
+                scope.tardigrade_auth_method = 'API key';
+        }
     };
 
     EditUriBackendConfig.loaders['oauth-base'] = function (scope) {
@@ -453,7 +482,65 @@ backupApp.service('EditUriBuiltins', function (AppService, AppUtils, SystemInfo,
         for (var x in nukeopts)
             delete options[nukeopts[x]];
     }
+	
+	EditUriBackendConfig.parsers['tardigrade'] = function (scope, module, server, port, path, options) {
+        if (options['--tardigrade-auth-method'])
+            scope.tardigrade_auth_method = options['--tardigrade-auth-method'];
+        if (options['--tardigrade-satellite'])
+            scope.tardigrade_satellite = options['--tardigrade-satellite'];
+        if (options['--tardigrade-api-key'])
+            scope.tardigrade_api_key = options['--tardigrade-api-key'];
+        if (options['--tardigrade-secret'])
+            scope.tardigrade_secret = options['--tardigrade-secret'];
+		if (options['--tardigrade-shared-access'])
+            scope.tardigrade_shared_access = options['--tardigrade-shared-access'];
+		if (options['--tardigrade-bucket'])
+            scope.tardigrade_bucket = options['--tardigrade-bucket'];
+		if (options['--tardigrade-folder'])
+            scope.tardigrade_folder = options['--tardigrade-folder'];
 
+        var nukeopts = ['--tardigrade-auth-method','--tardigrade-satellite', '--tardigrade-api-key', '--tardigrade-secret', '--tardigrade-shared-access', '--tardigrade-bucket', '--tardigrade-folder'];
+        for (var x in nukeopts)
+            delete options[nukeopts[x]];
+    };
+
+    EditUriBackendConfig.parsers['telegram'] = function (scope, module, server, port, path, options) {
+        if (options['--api-id'])
+            scope.api_id = options['--api-id'];
+        if (options['--api-hash'])
+            scope.api_hash = options['--api-hash'];
+        if (options['--auth-code'])
+            scope.auth_code = options['--auth-code'];
+        if (options['--channel-name'])
+            scope.channel_name = options['--channel-name'];
+        if (options['--phone-number'])
+            scope.phone_number = options['--phone-number'];
+        if (options['--auth_password'])
+            scope.auth_password = options['--auth_password'];
+
+        var nukeopts = ['--api-id','--api-hash', '--auth-code', '--channel-name', '--phone-number', '--auth_password'];
+        for (var x in nukeopts)
+            delete options[nukeopts[x]];
+    };
+
+    EditUriBackendConfig.parsers['cos'] = function (scope, module, server, port, path, options) {
+        if (options['--cos-app-id'])
+            scope.cos_app_id = options['--cos-app-id'];
+        if (options['--cos-region'])
+            scope.cos_region = options['--cos-region'];
+        if (options['--cos-secret-id'])
+            scope.cos_secret_id = options['--cos-secret-id'];
+		if (options['--cos-secret-key'])
+            scope.cos_secret_key = options['--cos-secret-key'];
+        if (options['--cos-bucket'])
+            scope.cos_bucket = options['--cos-bucket'];
+
+        var nukeopts = ['--cos-app-id', '--cos-region', '--cos-secret-id', '--cos-secret-key', '--cos-bucket'];
+        for (var x in nukeopts)
+            delete options[nukeopts[x]];
+		
+		EditUriBackendConfig.mergeServerAndPath(scope);
+    }
 
     // Builders take the scope and produce the uri output
     EditUriBackendConfig.builders['s3'] = function (scope) {
@@ -670,6 +757,47 @@ backupApp.service('EditUriBuiltins', function (AppService, AppUtils, SystemInfo,
 
         return url;
     }
+	
+	EditUriBackendConfig.builders['tardigrade'] = function (scope) {
+        var opts = {
+			'tardigrade-auth-method': scope.tardigrade_auth_method,
+            'tardigrade-satellite': scope.tardigrade_satellite,
+            'tardigrade-api-key': scope.tardigrade_api_key,
+            'tardigrade-secret': scope.tardigrade_secret,
+            'tardigrade-shared-access': scope.tardigrade_shared_access,
+			'tardigrade-bucket': scope.tardigrade_bucket,
+			'tardigrade-folder': scope.tardigrade_folder
+        };
+
+        EditUriBackendConfig.merge_in_advanced_options(scope, opts);
+
+        var url = AppUtils.format('{0}://tardigrade.io/config{1}',
+            scope.Backend.Key,
+            AppUtils.encodeDictAsUrl(opts)
+        );
+
+        return url;
+    };
+
+    EditUriBackendConfig.builders['telegram'] = function (scope) {
+        var opts = {
+            'api-id': scope.api_id,
+            'api-hash': scope.api_hash,
+            'auth-code': scope.auth_code,
+            'channel-name': scope.channel_name,
+            'phone-number': scope.phone_number,
+            'auth-password': scope.auth_password,
+        };
+
+        EditUriBackendConfig.merge_in_advanced_options(scope, opts);
+
+        var url = AppUtils.format('{0}://t.me/{1}',
+            scope.Backend.Key,
+            AppUtils.encodeDictAsUrl(opts)
+        );
+
+        return url;
+    };
 
     EditUriBackendConfig.builders['rclone'] = function (scope) {
 
@@ -715,6 +843,27 @@ backupApp.service('EditUriBuiltins', function (AppService, AppUtils, SystemInfo,
 
         return url;
     };
+
+
+    EditUriBackendConfig.builders['cos'] = function (scope) {
+        var opts = {
+            'cos-app-id': scope.cos_app_id,
+            'cos-region': scope.cos_region,
+            'cos-secret-id': scope.cos_secret_id,
+			'cos-secret-key': scope.cos_secret_key,
+			'cos-bucket': scope.cos_bucket
+        };
+
+        EditUriBackendConfig.merge_in_advanced_options(scope, opts);
+
+        var url = AppUtils.format('{0}://{1}{2}',
+            scope.Backend.Key,
+            scope.Path || '',
+            AppUtils.encodeDictAsUrl(opts)
+        );
+		
+        return url;
+    }
 
     EditUriBackendConfig.validaters['file'] = function (scope, continuation) {
         if (EditUriBackendConfig.require_path(scope))
@@ -845,7 +994,7 @@ backupApp.service('EditUriBuiltins', function (AppService, AppUtils, SystemInfo,
                 res = EditUriBackendConfig.show_error_dialog(gettextCatalog.getString('You must enter a domain name to use v3 API'));
 
             if (res && ((scope.openstack_tenantname) || '').trim().length == 0)
-                res = EditUriBackendCOnfig.show_error_dialog(gettextCatalog.getString('You must enter a tenant (aka project) name to use v3 API'));
+                res = EditUriBackendConfig.show_error_dialog(gettextCatalog.getString('You must enter a tenant (aka project) name to use v3 API'));
 
             if (res && (scope.openstack_apikey || '').trim().length != 0)
                 res = EditUriBackendConfig.show_error_dialog(gettextCatalog.getString('Openstack API Key are not supported in v3 keystone API.'));
@@ -995,6 +1144,30 @@ backupApp.service('EditUriBuiltins', function (AppService, AppUtils, SystemInfo,
         if (res)
             continuation();
     };
+	
+	EditUriBackendConfig.validaters['tardigrade'] = function (scope, continuation) {
+            continuation();
+    };
+
+    EditUriBackendConfig.validaters['telegram'] = function (scope, continuation) {
+        var opts = {
+            'api-id': scope.api_id,
+            'api-hash': scope.api_hash,
+            'auth-code': scope.auth_code,
+            'channel-name': scope.channel_name,
+            'phone-number': scope.phone_number,
+            'auth-password': scope.auth_password,
+        };
+        
+        var res =
+            EditUriBackendConfig.require_field(scope, 'api_id', gettextCatalog.getString('api_id')) &&
+            EditUriBackendConfig.require_field(scope, 'api_hash', gettextCatalog.getString('api_hash')) &&
+            EditUriBackendConfig.require_field(scope, 'channel_name', gettextCatalog.getString('channel_name')) &&
+            EditUriBackendConfig.require_field(scope, 'phone_number', gettextCatalog.getString('phone_number'));
+
+        if (res)
+            continuation();
+    };
 
     EditUriBackendConfig.validaters['rclone'] = function (scope, continuation) {
         var res =
@@ -1006,4 +1179,15 @@ backupApp.service('EditUriBuiltins', function (AppService, AppUtils, SystemInfo,
             continuation();
     };
 
+	EditUriBackendConfig.validaters['cos'] = function (scope, continuation) {
+		var res =
+            EditUriBackendConfig.require_field(scope, 'cos_app_id', gettextCatalog.getString('cos_app_id')) &&
+            EditUriBackendConfig.require_field(scope, 'cos_secret_id', gettextCatalog.getString('cos_secret_id')) &&
+            EditUriBackendConfig.require_field(scope, 'cos_secret_key', gettextCatalog.getString('cos_secret_key')) &&
+            EditUriBackendConfig.require_field(scope, 'cos_region', gettextCatalog.getString('cos_region')) &&
+            EditUriBackendConfig.require_field(scope, 'cos_bucket', gettextCatalog.getString('cos_bucket'));
+			
+		if (res)
+            continuation();
+    };
 });
