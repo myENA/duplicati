@@ -1,3 +1,73 @@
+2021-05-03 - 2.0.6.1_beta_2021-05-03
+==========
+## First beta build in over a year!
+
+We have been hard at work adding new features and fixing issues. This beta release is a roll-up of all the fixes since the last beta build and is expected to cause very few issues when upgrading. This release is based on 2.0.6.0_experimental.
+
+A big thanks to all Duplicati contributors, supporters, fans and users for keeping the project evolving and improving.
+
+### New in this version
+
+- Added Tardigrade backend
+- Added Tencent Cloud Object Storage (COS)
+- More Docker image versions
+- Improved long-path support on Windows
+
+We changed some larger things that you should be aware of when upgrading.
+
+### The SSH backend has been updated
+This update increases the security by prefering stronger encryption algorithms.
+However, this _can_ cause failing backups as the host key is reported as "changed".
+If this happens, edit the backup and update the host key.
+
+### Database version update from v10 to v11!
+Downgrade from this version requires manually adjusting the version number in the database. The additions can be re-applied if the database is upgraded again later.
+
+### Other changes that needs attention
+
+- Duplicati now requires Mono 5.10 or greater
+- S3 and Sharepoint option names on commandline now uses `-` for consistency (previously used `_`)
+
+2021-03-10 - 2.0.5.114_canary_2021-03-10
+==========
+## This build intends to remove some erronous warnings from the S3 backend introduced in the previous canary.
+
+## Detailed changes
+
+* Fixed the cURL error message url, thanks @warwickmm
+* Fixed the S3 warning messages, thanks @warwickmm
+
+2021-03-07 - 2.0.5.113_canary_2021-03-07
+==========
+## This build has two potentially breaking changes:
+
+### The Telegram backend is no longer included
+If you rely on this backend, do not upgrade.
+
+### The SSH backend has been updated
+This update increases the security by prefering stronger encryption algorithms.
+However, this _can_ cause failing backups as the host key is reported as "changed".
+If this happens, edit the backup and update the host key.
+
+
+## Detailed list of changes
+
+* Fixed case where the stop button in the UI would be hidden behind the progress bar, thanks @jfparis
+* Fixed tools to be Python3 compatible, thanks @jfparis
+* Removed the Telegram backend, due to poor user feedback, thanks @warwickmm
+* Reduced build sized by clearing unused Tardigrade library, thanks @warwickmm
+* Fixed issue where license files were not correctly included in build, thanks @warwickmm
+* Fixed cases where the `run-script` would get incorrect result values, thanks @warwickmm
+* Updated SSH.Net to 2020.0.1, thanks @warwickmm
+* Fixed an error when repairing a database, thanks @warwickmm
+* Changed options to use `-` instead of `_` for consistency, thanks @julianohubel
+* Fixed help output to hide deprecated options in some cases, thanks @kenkendk
+* Updated login page to redirect better when a proxy is in use, thanks @scambra
+* Fixed layout issues with scrollbars, thanks @warwickmm
+* Updated to using specific Mono versions when building images and testing, thanks @warwickmm
+* Improved unittesting, thanks @warwickmm
+* Exclude `$XDG_CACHE_HOME` as part of the normal filters, thanks @warwickmm
+
 2021-01-20 - 2.0.5.112_canary_2021-01-20
 ==========
 Hightlights for this update:
