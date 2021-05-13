@@ -247,10 +247,18 @@ namespace Duplicati.Library.Main.Operation
                         // (both at the start and end, for example), the log keeps track of
                         // whether a quota error or warning has been sent already.
                         // Note that an error can still be sent later even if a warning was sent earlier.
-                        if (!log.ReportedQuotaError && quota.FreeQuotaSpace == 0)
+                        double errorTotalThreshold = quota.FreeQuotaSpace / (double)quota.TotalQuotaSpace;
+                        double errorFileSizeThreshold = options.QuotaWarningThreshold * knownFileSize / (double)100;
+                        // the free space is less than 1% from total storage space
+                        // and the FreeQuotaSpace is less than QuotaWarningThreshold percent of the knownFileSize
+                        if (!log.ReportedQuotaError && errorTotalThreshold < 0.01 && errorFileSizeThreshold > quota.FreeQuotaSpace)
                         {
                             log.ReportedQuotaError = true;
-                            Logging.Log.WriteErrorMessage(LOGTAG, "BackendQuotaExceeded", null, "Backend quota has been exceeded: Using {0} of {1} ({2} available)", Library.Utility.Utility.FormatSizeString(knownFileSize), Library.Utility.Utility.FormatSizeString(quota.TotalQuotaSpace), Library.Utility.Utility.FormatSizeString(quota.FreeQuotaSpace));
+                            if (quota.FreeQuotaSpace > 0)
+                            {
+                                throw new Exception(string.Format("Backend quota will be exceeded: {0} available from {1}.", Library.Utility.Utility.FormatSizeString(quota.FreeQuotaSpace), Library.Utility.Utility.FormatSizeString(quota.TotalQuotaSpace)));
+                            }
+                            throw new Exception(string.Format("Backend quota has been exceeded: {0} available from {1}.", Library.Utility.Utility.FormatSizeString(0), Library.Utility.Utility.FormatSizeString(quota.TotalQuotaSpace)));
                         }
                         else if (!log.ReportedQuotaWarning && !log.ReportedQuotaError && quota.FreeQuotaSpace >= 0) // Negative value means the backend didn't return the quota info
                         {

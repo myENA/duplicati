@@ -30,7 +30,7 @@ using System.Threading.Tasks;
 
 namespace Duplicati.Library.Backend
 {
-    public class S3 : IBackend, IStreamingBackend, IRenameEnabledBackend
+    public partial class S3 : IBackend, IStreamingBackend, IRenameEnabledBackend
     {
         private static readonly string LOGTAG = Logging.Log.LogTagFromType<S3>();
 
