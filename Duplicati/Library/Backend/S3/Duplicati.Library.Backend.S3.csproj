@@ -55,6 +55,9 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Net.Http, Version=4.1.1.3, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\System.Net.Http.4.3.4\lib\net46\System.Net.Http.dll</HintPath>
+    </Reference>
     <Reference Include="System.Reactive, Version=4.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263">
       <HintPath>..\..\..\..\packages\System.Reactive.4.0.0\lib\net46\System.Reactive.dll</HintPath>
       <Private>True</Private>
@@ -75,10 +78,15 @@
     <Compile Include="IS3Client.cs" />
     <Compile Include="S3AwsClient.cs" />
     <Compile Include="S3Config.cs" />
+    <Compile Include="S3Quota.cs" />
     <Compile Include="Strings.cs" />
     <Compile Include="S3IAM.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Server\Duplicati.Server.Serialization\Duplicati.Server.Serialization.csproj">
+      <Project>{33FD1D24-C28F-4C71-933F-98F1586EA76C}</Project>
+      <Name>Duplicati.Server.Serialization</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Utility\Duplicati.Library.Utility.csproj">
       <Project>{DE3E5D4C-51AB-4E5E-BEE8-E636CEBFBA65}</Project>
       <Name>Duplicati.Library.Utility</Name>
